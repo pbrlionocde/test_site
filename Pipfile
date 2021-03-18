@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+flake8 = "*"
+autopep8 = "*"
+rope = "*"
+flake8-variables-names = "*"
+pre-commit = "*"
+mypy = "*"
+
+[requires]
+python_version = "3.8"
