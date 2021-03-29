@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Upload file csv{% endblock title %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
+
+{% block content %}
+  <main class="px-7">
+    <div class="container">
+      <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.as_p }} {{ form.error.file}}
+        <button type="submit" class="btn btn-outline-dark">Upload</button>
+      </form>
+    </div>
+  </main>
+{% endblock %}

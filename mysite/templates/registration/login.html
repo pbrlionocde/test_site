@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Log in{% endblock title %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
+
+{% block content %}
+  <main class="px-7">
+    <div class="container">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-dark">Log In</button>
+      </form>
+      <p><h5> If you aren`t registered yet, please go to the registration page.</h5></p>
+      <a class="btn btn-outline-dark btn-sm" href="{% url 'register' %}" >registration</a>
+    </div>
+  </main>
+{% endblock %}

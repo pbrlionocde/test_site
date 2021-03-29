@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmation delete{% endblock title %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
+
+{% block content %}
+  <main class="px-7">
+    <div class="container">
+      <form method="post">{% csrf_token %}
+        <br>Are you sure you want to delete "{{ object.text_note }}"?</br>
+        <button type="submit" class="btn btn-outline-dark">Submit</button>
+      </form>
+    </div>
+  </main>
+{% endblock %}
