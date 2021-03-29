@@ -25,7 +25,13 @@
         <a class="btn btn-outline-dark btn-sm" href="{% url 'done' %}">Done</a>
         <a class="btn btn-outline-dark btn-sm" href="{% url 'not_done' %}">Not done</a>
         <a class="btn btn-outline-dark btn-sm" href="{% url 'list_notes' %}">All</a>
-    </ul>
+      </ul>
+      <form method="get">
+          {% csrf_token %}
+          {{ form }}
+          <button type="submit" class="btn btn-outline-dark">filter</button>
+        </form><p></p>
+
 
       {% if list_note_display %}
         <div class="row mb-10">

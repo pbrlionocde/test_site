@@ -1,3 +1,6 @@
+from datetime import datetime
+import csv
+from django.views.generic.edit import FormMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
@@ -9,10 +12,7 @@ from django.views.generic.list import BaseListView
 from django.http import HttpResponse
 from django.views.generic.edit import FormView
 from .models import Note
-from .forms import UploadFileForm
-from datetime import datetime
-
-import csv
+from .forms import UploadFileForm, DateInputAllForm, DateInputNotDoneForm
 
 
 class UserObjectMixin:
@@ -42,12 +42,30 @@ class NoteUpdateView(UserObjectMixin, LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('list_notes')
 
 
-class NoteListView(UserObjectMixin, LoginRequiredMixin, ListView):
+class NoteListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
     model = Note
     paginate_by = 6
     ordering = '-pk'
+    form_class = DateInputAllForm
     context_object_name = 'list_note_display'
     template_name = 'list_notes.html'
+
+    def get_queryset(self):
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            status = form.cleaned_data['choose']
+            if status == '1':
+                return super().get_queryset().filter(
+                    date_of_end__range=(
+                        form.cleaned_data['start_of_date_range'],
+                        form.cleaned_data['end_of_date_range']
+                        ))
+            return super().get_queryset().filter(
+                date_of_creation__range=(
+                    form.cleaned_data['start_of_date_range'],
+                    form.cleaned_data['end_of_date_range']
+                    ))
+        return super().get_queryset()
 
 
 class DoneListView(NoteListView):
@@ -57,8 +75,16 @@ class DoneListView(NoteListView):
 
 
 class NotDoneListView(NoteListView):
+    form_class = DateInputNotDoneForm
 
     def get_queryset(self):
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            return super().get_queryset().filter(
+                date_of_creation__range=(
+                    form.cleaned_data['start_of_date_range'],
+                    form.cleaned_data['end_of_date_range']
+                    ))
         return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=False)
 
 
