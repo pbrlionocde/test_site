@@ -1,0 +1,115 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.163.1/containers/python-3-postgres
+// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6
+{
+	"name": "TODO",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"sqltools.connections": [{
+			"name": "Container database",
+			"driver": "PostgreSQL",
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 5432,
+			"database": "postgres",
+			"username": "postgres",
+			"password": "postgres"
+		}],
+		"python.languageServer": "Pylance",
+		"python.pythonPath": "/usr/local/bin/python",
+		"python.analysis.completeFunctionParens": true,
+		"python.analysis.typeCheckingMode": "basic",
+		"python.analysis.indexing": true,
+		"files.autoSave": "afterDelay",
+		"python.linting.pylintEnabled": true,
+		"python.linting.mypyEnabled": true,
+		"python.linting.flake8Enabled": true,
+		"python.linting.enabled": true,
+    "python.linting.pylintArgs": ["--rcfile=setup.cfg"],
+		// "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+		// "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		// "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+		// "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+		// "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+		// "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+		// "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+		// "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+		// "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		// "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"files.exclude": {
+			"**/__pycache__": true,
+			"**/.mypy_cache": true,
+		}
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-azuretools.vscode-docker",
+		"ms-python.python",
+		"mtxr.sqltools",
+		"mtxr.sqltools-driver-pg",
+		"ms-python.vscode-pylance",
+		"mhutchie.git-graph",
+		"MarkLarah.pre-commit-vscode",
+		"mechatroner.rainbow-csv",
+		"mgesbert.python-path",
+		"magicstack.MagicPython",
+		"mads-hartmann.bash-ide-vscode",
+		"littlefoxteam.vscode-python-test-adapter",
+		"kisstkondoros.vscode-gutter-preview",
+		"jeff-hykin.better-dockerfile-syntax",
+		"IronGeek.vscode-env",
+		"IBM.output-colorizer",
+		"humao.rest-client",
+		"hbenl.vscode-test-explorer",
+		"guyskk.language-cython",
+		"GraphQL.vscode-graphql",
+		"formulahendry.terminal",
+		"formulahendry.auto-rename-tag",
+		"formulahendry.auto-close-tag",
+		"FedericoVarela.pipenv-scripts",
+		"ExodiusStudios.comment-anchors",
+		"esbenp.prettier-vscode",
+		"eriklynd.json-tools",
+		"emilast.LogFileHighlighter",
+		"EditorConfig.EditorConfig",
+		"eamodio.gitlens",
+		"dsebastien.vscode-python-pack",
+		"donjayamanne.python-extension-pack",
+		"DotJoshJohnson.xml",
+		"donjayamanne.jquerysnippets",
+		"donjayamanne.githistory",
+		"DiogoNolasco.pyinit",
+		"DavidAnson.vscode-markdownlint",
+		"cweijan.vscode-redis-client",
+		"CoenraadS.bracket-pair-colorizer-2",
+		"codezombiech.gitignore",
+		"christian-kohler.path-intellisense",
+		"bibhasdn.django-html",
+		"BetaiAndMark.search-similar-code",
+		"BattleBas.kivy-vscode",
+		"batisteo.vscode-django",
+		"auchenberg.vscode-browser-preview",
+		"abusaidm.html-snippets",
+		"30-seconds.30-seconds-of-code",
+		"aaron-bond.better-comments"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [8000, 5432],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pipenv install --dev && $(pipenv --venv)/bin/pre-commit install",
+
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}
