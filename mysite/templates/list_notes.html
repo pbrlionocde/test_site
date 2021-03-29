@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Main{% endblock title %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/style.css' %}"> {% endblock style %}
+
+{% block header %}
+{% if user.is_authenticated %}
+ <a class="btn btn-secondary btn-sm" href="{% url 'create_new_note' %}">Crete new note</a>
+ <a class="btn btn-secondary btn-sm" href="{% url 'import_notes' %}">Import notes</a>
+ <a class="btn btn-secondary btn-sm" href="{% url 'download' %}">Download notes</a>
+ <a class="btn btn-secondary btn-sm" href="{% url 'logout' %}">Log out</a>
+{% else %}
+ <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>
+{% endif %}
+<hr width="1500" size="2"/>
+{% endblock header %}
+
+{% block content%}
+  <main class="px-7 ">
+    <div class="container">
+
+      <ul id="menu">
+        <a class="btn btn-outline-dark btn-sm" href="{% url 'done' %}">Done</a>
+        <a class="btn btn-outline-dark btn-sm" href="{% url 'not_done' %}">Not done</a>
+        <a class="btn btn-outline-dark btn-sm" href="{% url 'list_notes' %}">All</a>
+    </ul>
+
+      {% if list_note_display %}
+        <div class="row mb-10">
+          <div class="col-4 themed-grid-col">Text your note</div>
+          <div class="col-3 themed-grid-col">Options</div>
+          <div class="col-5 themed-grid-">Status</div>
+          <hr width="1100" size="2"/>
+        </div>
+
+
+        {% for note in list_note_display %}
+          <div class="row mb-10">
+            <div class="col-4 themed-grid-col">{{ note.text_note }}</div>
+            <div class="col-3 themed-grid-col">
+
+              {% if not note.done %}
+              <form action="{% url 'done_note' pk=note.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark btn-sm">Done</button>
+                <a href="{% url 'update_note' pk=note.pk %}" class="btn btn-outline-dark btn-sm">Update</a>
+                {% endif %}
+                <a href="{% url 'delete_note' pk=note.pk %}" class="btn btn-outline-dark btn-sm">Delete</a>
+              </form>
+            </div>
+
+            {% if not note.done %}
+              <div class="col-5 themed-grid-col">Date of creation: {{ note.date_of_creation }} <br>Status: not done</br></div>
+            {% else %}
+              <div class="col-5 themed-grid-col">Date of end: {{ note.date_of_end }} <br>Status: done</br></div>
+            {% endif %}
+          <hr width="1100" size="2"/>
+
+          </div>
+        {% endfor %}
+
+        {% else %}
+        You are haven`t notes, please go to create note on top the site
+        {% endif %}
+
+        {% if page_obj.has_next or page_obj.has_previous  %}
+          <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                {% endif %}
+
+                {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                      <li class="page-item" aria-current="page">
+                        <span class="page-link" >
+                          {{ i }}
+                          <span class="sr-only" >(current)</span>
+                        </span>
+                      </li>
+                    {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+        {% endif %}
+
+    </div>
+  </main>
+{% endblock %}

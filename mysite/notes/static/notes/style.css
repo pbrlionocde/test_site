@@ -1,0 +1,19 @@
+main.px-7 div.container {
+    padding-top: 3%;
+}
+
+li.page-item a.page-link {
+    color: rgb(34, 33, 33);
+}
+
+li.page-item span.page-link {
+    background-color: rgb(34, 33, 33);
+    color: rgb(243, 241, 241);
+}
+
+.tab-content {
+    display: none;
+}
+.tab-content:target {
+    display: block;
+}
