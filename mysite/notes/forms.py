@@ -1,6 +1,7 @@
 from django_registration.forms import RegistrationForm
 from django.core.validators import FileExtensionValidator
 from django import forms
+from django.utils import timezone
 from .models import User
 
 
@@ -14,16 +15,23 @@ class UploadFileForm(forms.Form):
 
 
 class DateInputAllForm(forms.Form):
-    status_selection = (
-        (1, 'Date of done'),
-        (2, 'Date creation')
-    )
-
-    choose = forms.ChoiceField(choices=status_selection)
-    start_of_date_range = forms.DateField(widget=forms.SelectDateWidget(years=range(2018, 2024)))
-    end_of_date_range = forms.DateField(widget=forms.SelectDateWidget(years=range(2018, 2024)))
-
+    start_date_of_creation_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}))
+    end_date_of_creation_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}), initial=timezone.now())
+    start_date_of_end_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}))
+    end_date_of_end_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}), initial=timezone.now())
 
 class DateInputNotDoneForm(forms.Form):
-    start_of_date_range = forms.DateField(widget=forms.SelectDateWidget(years=range(2018, 2024)))
-    end_of_date_range = forms.DateField(widget=forms.SelectDateWidget(years=range(2018, 2024)))
+    start_date_of_creation_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}))
+    end_date_of_creation_range = forms.DateField(
+        widget=forms.SelectDateWidget(years=range(2018, 2024),
+        attrs={'class': 'form-control', 'style':'width:8%'}))

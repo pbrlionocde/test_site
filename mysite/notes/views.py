@@ -49,23 +49,28 @@ class NoteListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
     form_class = DateInputAllForm
     context_object_name = 'list_note_display'
     template_name = 'list_notes.html'
+    params = ['']
 
     def get_queryset(self):
+        if len(self.params) == 4:
+            queryset = (
+                        super().get_queryset().filter(date_of_creation__range=(self.params[0], self.params[1])) |
+                        super().get_queryset().filter(date_of_end__range=(self.params[2],self.params[3]))
+                        ).distinct()
+            return queryset
+        return super().get_queryset()
+
+    def get(self, request, *args, **kwargs):
         form = self.form_class(self.request.GET)
         if form.is_valid():
-            status = form.cleaned_data['choose']
-            if status == '1':
-                return super().get_queryset().filter(
-                    date_of_end__range=(
-                        form.cleaned_data['start_of_date_range'],
-                        form.cleaned_data['end_of_date_range']
-                        ))
-            return super().get_queryset().filter(
-                date_of_creation__range=(
-                    form.cleaned_data['start_of_date_range'],
-                    form.cleaned_data['end_of_date_range']
-                    ))
-        return super().get_queryset()
+            self.params = [
+                form.cleaned_data['start_date_of_creation_range'],
+                form.cleaned_data['end_date_of_creation_range'],
+                form.cleaned_data['start_date_of_end_range'],
+                form.cleaned_data['end_date_of_end_range']
+                ]
+            return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class DoneListView(NoteListView):
@@ -74,18 +79,33 @@ class DoneListView(NoteListView):
         return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=True)
 
 
-class NotDoneListView(NoteListView):
+class NotDoneListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
+    model = Note
+    paginate_by = 6
+    ordering = '-pk'
+    context_object_name = 'list_note_display'
+    template_name = 'list_notes.html'
+    params = ['']
     form_class = DateInputNotDoneForm
 
     def get_queryset(self):
-        form = self.form_class(self.request.GET)
-        if form.is_valid():
+        if len(self.params) == 2:
             return super().get_queryset().filter(
                 date_of_creation__range=(
-                    form.cleaned_data['start_of_date_range'],
-                    form.cleaned_data['end_of_date_range']
-                    ))
-        return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=False)
+                    self.params[0],
+                    self.params[1])
+                    ).exclude(date_of_end__isnull=False)
+        return super().get_queryset().exclude(date_of_end__isnull=False)
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            self.params = [
+                form.cleaned_data['start_date_of_creation_range'],
+                form.cleaned_data['end_date_of_creation_range']
+                ]
+            return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class NoteDoneView(LoginRequiredMixin, SingleObjectMixin, RedirectView):

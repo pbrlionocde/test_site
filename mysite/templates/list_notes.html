@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load pagination_tag %}
 
 {% block title %}Main{% endblock title %}
 
@@ -18,20 +19,44 @@
 {% endblock header %}
 
 {% block content%}
+
+
+
+
   <main class="px-7 ">
     <div class="container">
+    <div class="container-lg" >
+          <form class="form-group " method="get">
+              {% csrf_token %}
+              <div class="container-lg" style="justify-content: space-around">
+                <div class="row">
+                  <h5>&nbsp&nbspFrom date creation&nbsp&nbsp</h5>
+                  {{ form.start_date_of_creation_range }}
+                  <h5>&nbsp&nbspto&nbsp&nbsp</h5>
+                  {{ form.end_date_of_creation_range }}
+                  {% if form.start_date_of_end_range %}
+                </div>
+                <div class="row">
+                  <h5>&nbsp&nbspFrom date end&nbsp&nbsp</h5>
+                  {{ form.start_date_of_end_range }}
+                  <h5>&nbsp&nbspto&nbsp&nbsp</h5>
+                  {{ form.end_date_of_end_range }}
+                  <button type="submit" class="btn btn-outline-dark">filter</button></div>
+                  {% else %}
+                  <button type="submit" class="btn btn-outline-dark">filter</button></div>
+
+                  {% endif %}
+                </div>
+              </div>
+          </form>
+      <hr width="1050" >
 
       <ul id="menu">
         <a class="btn btn-outline-dark btn-sm" href="{% url 'done' %}">Done</a>
         <a class="btn btn-outline-dark btn-sm" href="{% url 'not_done' %}">Not done</a>
         <a class="btn btn-outline-dark btn-sm" href="{% url 'list_notes' %}">All</a>
       </ul>
-      <form method="get">
-          {% csrf_token %}
-          {{ form }}
-          <button type="submit" class="btn btn-outline-dark">filter</button>
-        </form><p></p>
-
+      <hr width="1050">
 
       {% if list_note_display %}
         <div class="row mb-10">
@@ -40,7 +65,6 @@
           <div class="col-5 themed-grid-">Status</div>
           <hr width="1100" size="2"/>
         </div>
-
 
         {% for note in list_note_display %}
           <div class="row mb-10">
@@ -77,7 +101,7 @@
               <ul class="pagination">
 
                 {% if page_obj.has_previous %}
-                  <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                  <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}">First</a></li>
                 {% endif %}
 
                 {% for i in page_obj.paginator.page_range %}
@@ -89,12 +113,12 @@
                         </span>
                       </li>
                     {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?{% param_replace page=i %}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                  <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.paginator.num_pages %}">Last</a></li>
                 {% endif %}
               </ul>
             </nav>

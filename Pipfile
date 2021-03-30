@@ -9,6 +9,7 @@ psycopg2 = "*"
 python-decouple = "*"
 django-registration = "*"
 django-bootstrap-form = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 flake8 = "*"
@@ -17,6 +18,7 @@ rope = "*"
 flake8-variables-names = "*"
 pre-commit = "*"
 mypy = "*"
+pylint-django = "*"
 
 [requires]
 python_version = "3.8"
