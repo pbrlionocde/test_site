@@ -1,5 +1,7 @@
-from datetime import datetime
+from ast import Str
 import csv
+from typing import Dict, Any
+from datetime import datetime
 from django.views.generic.edit import FormMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -49,26 +51,20 @@ class NoteListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
     form_class = DateInputAllForm
     context_object_name = 'list_note_display'
     template_name = 'list_notes.html'
-    params = ['']
+    params: Dict[Str, Any] = dict()
+
+  #  def get_context_data(self, **kwargs):
+     #   return super().get_context_data(**kwargs)
 
     def get_queryset(self):
-        if len(self.params) == 4:
-            queryset = (
-                        super().get_queryset().filter(date_of_creation__range=(self.params[0], self.params[1])) |
-                        super().get_queryset().filter(date_of_end__range=(self.params[2],self.params[3]))
-                        ).distinct()
-            return queryset
+        if self.params is not None:
+            return super().get_queryset().filter(**self.params)
         return super().get_queryset()
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(self.request.GET)
         if form.is_valid():
-            self.params = [
-                form.cleaned_data['start_date_of_creation_range'],
-                form.cleaned_data['end_date_of_creation_range'],
-                form.cleaned_data['start_date_of_end_range'],
-                form.cleaned_data['end_date_of_end_range']
-                ]
+            self.params = {key: value for key, value in form.cleaned_data.items() if value}
             return super().get(request, *args, **kwargs)
         return super().get(request, *args, **kwargs)
 
@@ -79,33 +75,11 @@ class DoneListView(NoteListView):
         return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=True)
 
 
-class NotDoneListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
-    model = Note
-    paginate_by = 6
-    ordering = '-pk'
-    context_object_name = 'list_note_display'
-    template_name = 'list_notes.html'
-    params = ['']
+class NotDoneListView(NoteListView):
     form_class = DateInputNotDoneForm
 
     def get_queryset(self):
-        if len(self.params) == 2:
-            return super().get_queryset().filter(
-                date_of_creation__range=(
-                    self.params[0],
-                    self.params[1])
-                    ).exclude(date_of_end__isnull=False)
-        return super().get_queryset().exclude(date_of_end__isnull=False)
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(self.request.GET)
-        if form.is_valid():
-            self.params = [
-                form.cleaned_data['start_date_of_creation_range'],
-                form.cleaned_data['end_date_of_creation_range']
-                ]
-            return super().get(request, *args, **kwargs)
-        return super().get(request, *args, **kwargs)
+        return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=False)
 
 
 class NoteDoneView(LoginRequiredMixin, SingleObjectMixin, RedirectView):
@@ -115,7 +89,7 @@ class NoteDoneView(LoginRequiredMixin, SingleObjectMixin, RedirectView):
 
     def make_done(self):
         now = timezone.now()
-        self.model.objects.filter(pk=self.kwargs.get(self.pk_url_kwarg)).update(date_of_end=now)
+        self.model.objects.filter(pk=self.kwargs.get(self.pk_url_kwarg)).update(date_of_end=now) #ignore
 
     def post(self, request, *args, **kwargs):
         self.make_done()

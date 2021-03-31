@@ -1,7 +1,6 @@
 from django_registration.forms import RegistrationForm
 from django.core.validators import FileExtensionValidator
 from django import forms
-from django.utils import timezone
 from .models import User
 
 
@@ -14,24 +13,17 @@ class UploadFileForm(forms.Form):
     file_notes = forms.FileField(validators=[FileExtensionValidator(['csv'])])
 
 
+class Html5DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class DateInputAllForm(forms.Form):
-    start_date_of_creation_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}))
-    end_date_of_creation_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}), initial=timezone.now())
-    start_date_of_end_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}))
-    end_date_of_end_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}), initial=timezone.now())
+    date_of_creation__lt = forms.DateField(widget=Html5DateInput, label='Until the date of creation', required=False)
+    date_of_creation__gt = forms.DateField(widget=Html5DateInput, label='From the date of creation', required=False)
+    date_of_end__lt = forms.DateField(widget=Html5DateInput, label='Until the date of end', required=False)
+    date_of_end__gt = forms.DateField(widget=Html5DateInput, label='From the date of end', required=False)
+
 
 class DateInputNotDoneForm(forms.Form):
-    start_date_of_creation_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}))
-    end_date_of_creation_range = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(2018, 2024),
-        attrs={'class': 'form-control', 'style':'width:8%'}))
+    date_of_creation__lt = forms.DateField(widget=Html5DateInput, label='Until the date of creation', required=False)
+    date_of_creation__gt = forms.DateField(widget=Html5DateInput, label='From the date of creation', required=False)

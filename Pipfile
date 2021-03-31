@@ -10,6 +10,7 @@ python-decouple = "*"
 django-registration = "*"
 django-bootstrap-form = "*"
 django-crispy-forms = "*"
+django-filter = "*"
 
 [dev-packages]
 flake8 = "*"
