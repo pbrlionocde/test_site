@@ -12,16 +12,15 @@
     <a class="btn btn-secondary btn-sm" href="{% url 'create_new_note' %}">Crete new note</a>
     <a class="btn btn-secondary btn-sm" href="{% url 'import_notes' %}">Import notes</a>
     <a class="btn btn-secondary btn-sm" href="{% url 'download' %}">Download notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'list_friends' %}">Friends</a>
     <a class="btn btn-secondary btn-sm" href="{% url 'logout' %}">Log out</a>
   {% else %}
-  <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>
   {% endif %}
-  <hr width="1500" size="2"/>
 {% endblock header %}
 
 {% block content%}
-
-  <main class="px-7 ">
+  <main>
     <ul id="menu">
       <a class="btn btn-outline-dark btn-sm" href="{% url 'done' %}">Done</a>
       <a class="btn btn-outline-dark btn-sm" href="{% url 'not_done' %}">Not done</a>

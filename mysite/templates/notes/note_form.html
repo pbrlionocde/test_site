@@ -8,7 +8,9 @@
 
 {% block header %}
   {% if user.is_authenticated %}
-    <a class="btn btn-secondary btn-sm" href="{% url 'create_new_note' %}">Crete new note</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'import_notes' %}">Import notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'download' %}">Download notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'list_friends' %}">Friends</a>
     <a class="btn btn-secondary btn-sm" href="{% url 'logout' %}">Log out</a>
   {% else %}
     <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>

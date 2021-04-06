@@ -5,14 +5,29 @@
 
 {% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
 
+{% block header %}
+  {% if user.is_authenticated %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'create_new_note' %}">Crete new note</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'download' %}">Download notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'list_friends' %}">Friends</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'logout' %}">Log out</a>
+  {% else %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
   <main class="px-7">
     <div class="container">
-      <form enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        {{ form.as_p }} {{ form.error.file}}
-        <button type="submit" class="btn btn-outline-dark">Upload</button>
-      </form>
+      {% if user.is_authenticated %}
+        <form enctype="multipart/form-data" method="post">
+          {% csrf_token %}
+          {{ form.as_p }} {{ form.error.file}}
+          <button type="submit" class="btn btn-outline-dark">Upload</button>
+        </form>
+      {% else %}
+        Please Log in
+      {% endif %}
     </div>
   </main>
 {% endblock %}

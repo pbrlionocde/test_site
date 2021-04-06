@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/tab_friends.css' %}"> {% endblock style %}
+
+{% block header %}
+  {% if user.is_authenticated %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'create_new_note' %}">Crete new note</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'import_notes' %}">Import notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'download' %}">Download notes</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'list_friends' %}">Friends</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'logout' %}">Log out</a>
+  {% else %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'login' %}">log in</a>
+  {% endif %}
+{% endblock header %}
+
+{% block content %}
+
+  {% if user.is_authenticated %}
+  <div class="row">
+    To create a new invitation link, click this button:
+    <a class="btn btn-outline-dark btn-sm" href="{% url 'generate_new_invitation' %}">Create</a>
+  </div>
+  <div class="row"><hr width="1500" align='left'></div>
+
+    {% if object_list %}
+      <div class="row">
+        <h5>Your friends:</h5>
+      </div>
+
+      {% for friend in friends %}
+       <div class="tab">
+        {{ friend }}
+       </div>
+      {% endfor %}
+
+    {% else %}
+      This page displays a list of friends.
+    {% endif %}
+  {% endif %}
+
+
+{% endblock %}

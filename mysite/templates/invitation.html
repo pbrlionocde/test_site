@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Confirmation delete{% endblock title %}
-
-{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/tab_friends.css' %}"> {% endblock style %}
 
 {% block header %}
   {% if user.is_authenticated %}
@@ -18,12 +16,19 @@
 {% endblock header %}
 
 {% block content %}
-  <main class="px-7">
-    <div class="container">
-      <form method="post">{% csrf_token %}
-        Are you sure you want to delete "{{ object.text_note }}"?
-        <button type="submit" class="btn btn-outline-dark">Submit</button>
-      </form>
+
+  {% if user.is_authenticated %}
+    <div class="row">
+      Your username: {{user.username}}
     </div>
-  </main>
+    <div class="row"><hr width="200" align='left'></div>
+    <div class="row">
+      Key for invite: {{key}}
+    </div>
+    <div class="row">
+      Copy and send this link to your friend to add to friends:
+      <a href="{% url 'confirmation' key=key %}" class="btn btn-outline-dark btn-sm">Url for invite</a>
+    </div>
+  {% endif %}
+
 {% endblock %}
