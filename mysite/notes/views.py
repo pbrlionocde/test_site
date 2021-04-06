@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.views.generic.base import RedirectView, TemplateView
 from .forms import UploadFileForm, DateInputAllForm, DateInputNotDoneForm, ConfirmationFriendshipForm
-from .models import Note, User, InviteKey
+from .models import Note, InviteKey
 
 
 class UserObjectMixin:
@@ -150,7 +150,6 @@ class UploadFileFormView(FormView):
 class FriendsListView(ListView):
     template_name = 'friends.html'
     context_object_name = 'friends'
-    model = User
     queryset:List [Any] = []
 
     def get_queryset(self):
@@ -176,7 +175,7 @@ class NewInvitationTemplateView(TemplateView):
         return super().get_context_data(key=key, **kwargs)
 
 
-class Invitation(DetailView):
+class InvitationView(DetailView):
     model = InviteKey
     slug_field = 'key'
     template_name = 'invitation.html'
@@ -184,7 +183,9 @@ class Invitation(DetailView):
 
     def get_context_data(self, **kwargs):
         form = ConfirmationFriendshipForm(
-            initial={'key':self.object.key}
+            initial={
+                'key':self.object.key
+            }
         )
         return super().get_context_data(form=form, **kwargs)
 
