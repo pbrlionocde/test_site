@@ -27,3 +27,7 @@ class DateInputAllForm(forms.Form):
 class DateInputNotDoneForm(forms.Form):
     date_of_creation__lt = forms.DateField(widget=Html5DateInput, label='Until the date of creation', required=False)
     date_of_creation__gt = forms.DateField(widget=Html5DateInput, label='From the date of creation', required=False)
+
+
+class ConfirmationFriendshipForm(forms.Form):
+    key = forms.CharField(widget=forms.HiddenInput)

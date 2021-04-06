@@ -4,16 +4,16 @@ import string
 import random
 import csv
 from typing import Dict, Any, List
-from django.views import View
+from django.contrib import messages
 from django.views.generic.edit import FormMixin, CreateView, DeleteView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic.list import ListView, BaseListView
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.base import RedirectView, TemplateView, TemplateResponseMixin
-from .forms import UploadFileForm, DateInputAllForm, DateInputNotDoneForm
+from django.views.generic.detail import SingleObjectMixin, DetailView
+from django.views.generic.base import RedirectView, TemplateView
+from .forms import UploadFileForm, DateInputAllForm, DateInputNotDoneForm, ConfirmationFriendshipForm
 from .models import Note, User, InviteKey
 
 
@@ -159,7 +159,7 @@ class FriendsListView(ListView):
 
 
 class NewInvitationTemplateView(TemplateView):
-    template_name = 'invitation.html'
+    template_name = 'create_invitation.html'
     model = InviteKey
 
     def get_key_invite(self, request):
@@ -167,10 +167,7 @@ class NewInvitationTemplateView(TemplateView):
         symbols = ''.join(
             random.choices(string.ascii_lowercase, k=len(current_time))
             )
-
         key = ''.join([i+j for i, j in zip(current_time,symbols)])
-
-        #user = request.user
         self.model.objects.create(key=key, inviting_user=request.user)
         return key
 
@@ -179,25 +176,34 @@ class NewInvitationTemplateView(TemplateView):
         return super().get_context_data(key=key, **kwargs)
 
 
-class ConfirmationRequestFriendshipView(TemplateResponseMixin, SingleObjectMixin, View):
-    template_name = 'confirmation_friendship.html'
+class Invitation(DetailView):
+    model = InviteKey
+    slug_field = 'key'
+    template_name = 'invitation.html'
+    context_object_name = 'invite_key'
+
+    def get_context_data(self, **kwargs):
+        form = ConfirmationFriendshipForm(
+            initial={'key':self.object.key}
+        )
+        return super().get_context_data(form=form, **kwargs)
+
+
+class ConfirmRequestFriendshipView(FormView):
     model = InviteKey
     success_url = reverse_lazy('list_friends')
+    form_class = ConfirmationFriendshipForm
 
-    def confirmation_friendship(self, key):
-        invite_obj = self.model.objects.get(key=key, friends_id__isnull=True)
-        if invite_obj:
-            #inviting_user = invite_obj.inviting_user
+    def confirm_friendship(self, key):
+        try:
+            invite_obj = self.model.objects.get(key=key, friends_id__isnull=True)
             self.request.user.friends.add(invite_obj.inviting_user)
             invite_obj.friends_id = invite_obj.inviting_user.id
             invite_obj.save()
-            #friends_id = inviting_user.id
-            #self.model_invite.objects.update(friends_id=friends_id)
 
-    def get(self, **kwargs):
-        context = kwargs
-        return self.render_to_response(context)
+        except self.model.DoesNotExist:
+            messages.add_message(self.request, messages.INFO, 'Your invitation key does not exist!')
 
-    def post(self, **kwargs):
-        self.confirmation_friendship(kwargs['key'])
-        return HttpResponseRedirect(self.success_url)
+    def form_valid(self, form):
+        self.confirm_friendship(form.cleaned_data['key'])
+        return super().form_valid(form)

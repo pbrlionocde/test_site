@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.http import require_POST
 from django_registration.backends.one_step.views import RegistrationView
 from .forms import UserForm
 from . import views
@@ -24,6 +25,7 @@ urlpatterns = [
 
     path('friends/', views.FriendsListView.as_view(), name='list_friends'),
     path('friends/new_invitation/', views.NewInvitationTemplateView.as_view(), name='generate_new_invitation'),
-    path('friends/confirmation/<str:key>/', views.ConfirmationRequestFriendshipView.as_view(), name='confirmation')
+    path('friends/confirmation/<str:slug>/', views.Invitation.as_view(), name='confirmation'),
+    path('friends/confirm/', require_POST(views.ConfirmRequestFriendshipView.as_view()), name='confirm')
 
 ]

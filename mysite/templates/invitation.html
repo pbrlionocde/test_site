@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load bootstrap %}
 
-{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/tab_friends.css' %}"> {% endblock style %}
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/confirmation.css' %}"> {% endblock style %}
 
 {% block header %}
   {% if user.is_authenticated %}
@@ -16,19 +17,16 @@
 {% endblock header %}
 
 {% block content %}
-
   {% if user.is_authenticated %}
-    <div class="row">
-      Your username: {{user.username}}
-    </div>
-    <div class="row"><hr width="200" align='left'></div>
-    <div class="row">
-      Key for invite: {{key}}
-    </div>
-    <div class="row">
-      Copy and send this link to your friend to add to friends:
-      <a href="{% url 'confirmation' key=key %}" class="btn btn-outline-dark btn-sm">Url for invite</a>
-    </div>
+    <form method="post" action="{% url 'confirm' %}">
+      {% csrf_token %}
+      <h4>Are you confirming a friend request from {{invite_key.inviting_user}}?</h4>
+      <div class="form-group row">
+        {{form}}
+        <button type="submit" class="btn btn-outline-dark">Submit</button>
+      </div>
+    </form>
+  {% else %}
+    Please log in on site
   {% endif %}
-
 {% endblock %}

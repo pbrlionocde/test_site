@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/tab_friends.css' %}"> {% endblock style %}
 
 {% block header %}
   {% if user.is_authenticated %}
@@ -13,14 +16,15 @@
 {% endblock header %}
 
 {% block content %}
+
   {% if user.is_authenticated %}
-    <form method="post">
-      {% csrf_token %}
-      <h4>Are you confirming a friend request from?</h4>
-      Invite key: {{key}}
-      <button type="submit" class="btn btn-outline-dark">Submit</button>
-    </form>
-  {% else %}
-    Please log in on site
+    <div class="row">
+      Key for invite: {{key}}
+    </div>
+    <div class="row">
+      Copy and send this link to your friend to add to friends:
+      <a href="{% url 'confirmation' slug=key %}" class="btn btn-outline-dark btn-sm">Invite friend</a>
+    </div>
   {% endif %}
+
 {% endblock %}
