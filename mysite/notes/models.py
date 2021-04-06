@@ -25,8 +25,8 @@ class User(AbstractUser):
 
 class InviteKey(models.Model):
     key = models.CharField(max_length=300, unique=True)
-    inviting_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    friends_id = models.IntegerField(null=True)
+    inviting_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inviting_user')
+    invited_user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='invited_user')
 
 
 class Note(models.Model):

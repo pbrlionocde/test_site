@@ -4,7 +4,7 @@ import string
 import random
 import csv
 from typing import Dict, Any, List
-from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin, CreateView, DeleteView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
@@ -195,14 +195,10 @@ class ConfirmRequestFriendshipView(FormView):
     form_class = ConfirmationFriendshipForm
 
     def confirm_friendship(self, key):
-        try:
-            invite_obj = self.model.objects.get(key=key, friends_id__isnull=True)
-            self.request.user.friends.add(invite_obj.inviting_user)
-            invite_obj.friends_id = invite_obj.inviting_user.id
-            invite_obj.save()
-
-        except self.model.DoesNotExist:
-            messages.add_message(self.request, messages.INFO, 'Your invitation key does not exist!')
+        invite_obj = get_object_or_404(self.model, key=key, invited_user__isnull=True)
+        self.request.user.friends.add(invite_obj.inviting_user)
+        invite_obj.invited_user = self.request.user
+        invite_obj.save()
 
     def form_valid(self, form):
         self.confirm_friendship(form.cleaned_data['key'])
