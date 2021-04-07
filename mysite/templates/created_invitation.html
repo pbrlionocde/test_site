@@ -16,14 +16,15 @@
 {% endblock header %}
 
 {% block content %}
+  {{invite}}
 
   {% if user.is_authenticated %}
     <div class="row">
-      Key for invite: {{key}}
+      Key for invite: {{invite_key.key}}
     </div>
     <div class="row">
       Copy and send this link to your friend to add to friends:
-      <a href="{% url 'confirmation' slug=key %}" class="btn btn-outline-dark btn-sm">Invite friend</a>
+      <a href="{% url 'confirmation' slug=invite_key.key %}" class="btn btn-outline-dark btn-sm">Invite friend</a>
     </div>
   {% endif %}
 

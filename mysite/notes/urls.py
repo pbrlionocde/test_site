@@ -24,7 +24,12 @@ urlpatterns = [
     path('importcsv/', views.UploadFileFormView.as_view(), name='import_notes'),
 
     path('friends/', views.FriendsListView.as_view(), name='list_friends'),
-    path('friends/new_invitation/', views.NewInvitationTemplateView.as_view(), name='generate_new_invitation'),
+    path(
+        'friends/create_new_invitation/',
+        require_POST(views.NewInvitationView.as_view()),
+        name='create_new_invitation'
+    ),
+    path('friends/new_invitation/<int:pk>', views.InvitationLinkView.as_view(), name='invitation_link'),
     path('friends/confirmation/<str:slug>/', views.InvitationView.as_view(), name='confirmation'),
     path('friends/confirm/', require_POST(views.ConfirmRequestFriendshipView.as_view()), name='confirm')
 

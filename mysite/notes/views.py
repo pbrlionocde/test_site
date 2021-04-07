@@ -4,15 +4,16 @@ import string
 import random
 import csv
 from typing import Dict, Any, List
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin, CreateView, DeleteView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic.list import ListView, BaseListView
 from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.detail import SingleObjectMixin, DetailView
-from django.views.generic.base import RedirectView, TemplateView
+from django.views.generic.base import RedirectView
 from .forms import UploadFileForm, DateInputAllForm, DateInputNotDoneForm, ConfirmationFriendshipForm
 from .models import Note, InviteKey
 
@@ -118,7 +119,7 @@ class CsvResponseView(UserObjectMixin, BaseListView):
 
 class UploadFileFormView(FormView):
     model = Note
-    template_name = 'import.html'
+    template_name = 'import_notes.html'
     form_class = UploadFileForm
     success_url = reverse_lazy('list_notes')
     date_format = '%Y-%m-%d %H:%M:%S'
@@ -157,22 +158,28 @@ class FriendsListView(ListView):
         return super().get_queryset()
 
 
-class NewInvitationTemplateView(TemplateView):
-    template_name = 'create_invitation.html'
-    model = InviteKey
+class NewInvitationView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):    #pylint: disable=R0201
+        return reverse('invitation_link', args=args, kwargs=kwargs)
 
-    def get_key_invite(self, request):
+    def create_an_invitation_object (self):
         current_time = str(datetime.now().timestamp())
         symbols = ''.join(
             random.choices(string.ascii_lowercase, k=len(current_time))
             )
         key = ''.join([i+j for i, j in zip(current_time,symbols)])
-        self.model.objects.create(key=key, inviting_user=request.user)
-        return key
+        invitation_obj = InviteKey.objects.create(key=key, inviting_user=self.request.user)
+        return invitation_obj
 
-    def get_context_data(self, **kwargs):
-        key = self.get_key_invite(self.request)
-        return super().get_context_data(key=key, **kwargs)
+    def post(self, request, *args, **kwargs):
+        kwargs['pk'] = self.create_an_invitation_object().id
+        return super().post(request, *args, **kwargs)
+
+
+class InvitationLinkView(DetailView):
+    model = InviteKey
+    template_name = 'created_invitation.html'
+    context_object_name = 'invite_key'
 
 
 class InvitationView(DetailView):
@@ -195,6 +202,7 @@ class ConfirmRequestFriendshipView(FormView):
     success_url = reverse_lazy('list_friends')
     form_class = ConfirmationFriendshipForm
 
+    @transaction.atomic
     def confirm_friendship(self, key):
         invite_obj = get_object_or_404(self.model, key=key, invited_user__isnull=True)
         self.request.user.friends.add(invite_obj.inviting_user)

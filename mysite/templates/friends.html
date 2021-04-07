@@ -19,7 +19,10 @@
   {% if user.is_authenticated %}
   <div class="row">
     To create a new invitation link, click this button:
-    <a class="btn btn-outline-dark btn-sm" href="{% url 'generate_new_invitation' %}">Create</a>
+    <form method="post" action="{% url 'create_new_invitation' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-dark">Create</button>
+    <form>
   </div>
   <div class="row"><hr width="1500" align='left'></div>
 
