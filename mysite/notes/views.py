@@ -70,7 +70,6 @@ class NoteListView(UserObjectMixin, LoginRequiredMixin, FormMixin, ListView):
 
 
 class DoneListView(NoteListView):
-
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user).exclude(date_of_end__isnull=True)
 
