@@ -95,7 +95,7 @@ class NoteDoneView(LoginRequiredMixin, SingleObjectMixin, RedirectView):
         return super().post(request, *args, **kwargs)
 
 
-class CsvResponseView(UserObjectMixin, BaseListView):
+class CsvResponseView(LoginRequiredMixin, UserObjectMixin, BaseListView):
     model = Note
     date_format = '%Y-%m-%d %H:%M:%S'
 
@@ -116,7 +116,7 @@ class CsvResponseView(UserObjectMixin, BaseListView):
         return response
 
 
-class UploadFileFormView(FormView):
+class UploadFileFormView(LoginRequiredMixin, FormView):
     model = Note
     template_name = 'import_notes.html'
     form_class = UploadFileForm
@@ -147,7 +147,7 @@ class UploadFileFormView(FormView):
         return super().form_valid(form)
 
 
-class FriendsListView(ListView):
+class FriendsListView(LoginRequiredMixin, ListView):
     template_name = 'friends.html'
     context_object_name = 'friends'
     queryset:List [Any] = []
@@ -157,7 +157,7 @@ class FriendsListView(ListView):
         return super().get_queryset()
 
 
-class NewInvitationView(RedirectView):
+class NewInvitationView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):    #pylint: disable=R0201
         return reverse('invitation_link', args=args, kwargs=kwargs)
 
@@ -175,13 +175,13 @@ class NewInvitationView(RedirectView):
         return super().post(request, *args, **kwargs)
 
 
-class InvitationLinkView(DetailView):
+class InvitationLinkView(LoginRequiredMixin, DetailView):
     model = InviteKey
     template_name = 'created_invitation.html'
     context_object_name = 'invite_key'
 
 
-class InvitationView(DetailView):
+class InvitationView(LoginRequiredMixin, DetailView):
     model = InviteKey
     slug_field = 'key'
     template_name = 'invitation.html'
@@ -196,7 +196,7 @@ class InvitationView(DetailView):
         return super().get_context_data(form=form, **kwargs)
 
 
-class ConfirmRequestFriendshipView(FormView):
+class ConfirmRequestFriendshipView(LoginRequiredMixin, FormView):
     model = InviteKey
     success_url = reverse_lazy('list_friends')
     form_class = ConfirmationFriendshipForm
