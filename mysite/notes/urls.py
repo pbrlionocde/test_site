@@ -5,7 +5,6 @@ from django_registration.backends.one_step.views import RegistrationView
 from .forms import UserForm
 from . import views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/register/', RegistrationView.as_view(form_class=UserForm), name='register',),
