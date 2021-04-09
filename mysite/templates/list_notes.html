@@ -5,7 +5,7 @@
 
 {% block title %}Main{% endblock title %}
 
-{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles.css' %}"> {% endblock style %}
+{% block style %} <link rel="stylesheet" type="text/css" href="{% static 'notes/styles1.css' %}"> {% endblock style %}
 
 {% block header %}
   {% if user.is_authenticated %}
@@ -30,7 +30,7 @@
 
     <form method="get">
       <div class="form-group">
-        {% csrf_token %}
+
         <div class="row mb-12">
           <div class="col-3 themed-grid-col">{{form.date_of_creation__lt.label}}</div>
           <div class="col-3 themed-grid-col">{{form.date_of_creation__gt.label}}</div>
@@ -58,7 +58,7 @@
 
         {% for note in list_note_display %}
           <div class="row mb-10">
-            <div class="col-4 themed-grid-col">{{ note.text_note }}</div>
+            <div class="col-4 themed-grid-col"><div class="length-word">{{ note.text_note }}</div></div>
             <div class="col-3 themed-grid-col">
 
               {% if not note.done %}

@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: DjangoTest",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/mysite",
+            "program": "manage.py",
+            "args": [
+                "test"
+            ],
+            "django": true
+        },
+        {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",

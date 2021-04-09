@@ -14,6 +14,11 @@ li.page-item span.page-link {
 .tab-content {
     display: none;
 }
+
 .tab-content:target {
     display: block;
+}
+
+div.length-word {
+    word-break: break-all;
 }

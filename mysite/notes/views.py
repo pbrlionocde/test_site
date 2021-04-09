@@ -205,8 +205,7 @@ class ConfirmRequestFriendshipView(LoginRequiredMixin, FormView):
     def confirm_friendship(self, key):
         invite_obj = get_object_or_404(self.model, key=key, invited_user__isnull=True)
         self.request.user.friends.add(invite_obj.inviting_user)
-        invite_obj.invited_user = self.request.user
-        invite_obj.save()
+        invite_obj = InviteKey.objects.filter(key=key).update(invited_user=self.request.user)
 
     def form_valid(self, form):
         self.confirm_friendship(form.cleaned_data['key'])
