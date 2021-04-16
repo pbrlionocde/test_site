@@ -11,6 +11,8 @@ django-registration = "*"
 django-bootstrap-form = "*"
 django-crispy-forms = "*"
 django-filter = "*"
+celery = "*"
+redis = "*"
 
 [dev-packages]
 flake8 = "*"

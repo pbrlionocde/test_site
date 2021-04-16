@@ -163,12 +163,22 @@ class DeleteUpdateDoneListNotesTest(TestMixIn, TestCase):
         self.assertEquals(len(object_list), 1)
         self.assertNotEquals(object_list[0], 'text_note0')
 
+    def test_delete_anonymous(self):
+        note = Note.objects.get(text_note='text_note0')
+        response = self.client.post(reverse('delete_note', kwargs={'pk':note.pk}))
+        self.assertRedirects(response, reverse('login')+'?next=/deletenote/3/', 302)
+
     def test_update(self, **kwargs):
         self.client.force_login(User.objects.get_or_create(username='pbrlionocde')[0])
         note = Note.objects.get(text_note='text_note0')
         self.client.post(reverse('update_note', kwargs={'pk':note.pk}), {'text_note': 'updated_text'})
         note = Note.objects.get(pk=note.pk)
         self.assertEquals(note.text_note, 'updated_text')
+
+    def test_update_anonymous(self):
+        note = Note.objects.get(text_note='text_note0')
+        response = self.client.post(reverse('update_note', kwargs={'pk':note.pk}))
+        self.assertRedirects(response, reverse('login')+'?next=/updatenote/{}/'.format(note.pk), 302)
 
     def test_done(self):
         self.initialize_delete_update_done_post('done_note')
@@ -222,6 +232,16 @@ class DoneNotDoneTabTest(TestUserMixIn, TestMixIn, TestCase):
         object_list = self.initialize_get('prince_blood', reverse('not_done'))
         for note in object_list:
             self.assertEquals(note.user, self.user2)
+
+    def test_date_of_end_done(self):
+        object_list = self.initialize_get('pbrlionocde', reverse('done'))
+        for note in object_list:
+            self.assertEquals(note.date_of_end__isnull, False)
+
+    def test_date_of_end_not_done(self):
+        object_list = self.initialize_get('pbrlionocde', reverse('not_done'))
+        for note in object_list:
+            self.assertEquals(note.date_of_end_, True)
 
     def test_pagination_done(self):
         """done tab"""
