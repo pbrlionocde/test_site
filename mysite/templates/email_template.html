@@ -1,0 +1,60 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    h2 {
+      color: black;
+    }
+    table {
+      text-align: center;
+      width: 60%;
+      border: 3px solid black;
+      border-radius: 7px;
+      border-style: ridge;
+    }
+    caption {
+      font-size: large;
+      color: black;
+    }
+    td.radius {
+      border-color: white;
+      border-style: solid;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    tr.header {
+      font-size: medium;
+      color: white;
+      background: gray;
+    }
+    tr.notes {
+      font-size: medium;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>
+    Hi, you have unfinished notes.
+    Please go to the site and check them out.
+  </h2>
+  <table>
+    <caption>Your unfinished tasks</caption>
+      <tr class="header">
+        <td class="radius" width="50%">text note</td>
+        <td class="radius" width="50%">date of creation</td>
+      </tr>
+    {% for note in notes %}
+      <tr class="notes">
+        <td>{{note.text_note}}</td>
+        <td>{{note.date_of_creation}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

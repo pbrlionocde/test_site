@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 psycopg2 = "*"
 python-decouple = "*"
 django-registration = "*"
@@ -13,6 +12,7 @@ django-crispy-forms = "*"
 django-filter = "*"
 celery = "*"
 redis = "*"
+django = "*"
 
 [dev-packages]
 flake8 = "*"
